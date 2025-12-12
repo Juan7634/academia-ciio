@@ -90,10 +90,10 @@ export const CreateStudyPlanPage = () => {
                 <CardContent>
 
                     <Accordion
-                        type="single"
+                        type="multiple"
                         collapsible
                         className="w-full"
-                        defaultValue="item-1"
+                        defaultValue={["item-1"]}
                     >
                         <AccordionItem value="item-1" className="cursor-pointer mb-2">
                             <AccordionTrigger className="bg-primary/10 w-full px-4">

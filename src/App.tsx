@@ -6,8 +6,9 @@ import ProtectedRoute from "./layouts/ProtectedRoute";
 import { HomePage } from "./pages/home/HomePage";
 import { AuthenticatedLayout } from "./layouts/AuthenticatedLayout";
 import { SubjectPage } from "./pages/subjects/SubjectPage";
-import { BREADCRUMB_HOME, BREADCRUMB_STUDYPLAN, BREADCRUMB_SUBJECT, } from "./layouts/constants/breadcrumb";
+import { BREADCRUMB_HOME, BREADCRUMB_STUDYPLAN, BREADCRUMB_STUDYPLAN_REVISE, BREADCRUMB_SUBJECT, } from "./layouts/constants/breadcrumb";
 import { CreateStudyPlanPage } from "./pages/plans/CreateStudyPlanPage";
+import { RevisionPlanTable } from "./pages/plans/RevisionPlanTable";
 
 export const App = () => {
 
@@ -55,6 +56,13 @@ export const App = () => {
               element: <CreateStudyPlanPage />,
               handle: {
                 breadcrumb: BREADCRUMB_STUDYPLAN
+              }
+            },
+            {
+              path: 'plans/revise',
+              element: <RevisionPlanTable />,
+              handle: {
+                breadcrumb: BREADCRUMB_STUDYPLAN_REVISE
               }
             }
           ]

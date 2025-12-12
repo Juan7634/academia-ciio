@@ -1,5 +1,5 @@
 import * as React from "react"
-import { GalleryVerticalEnd, LayoutPanelLeft, List, User } from "lucide-react"
+import { BookText, GalleryVerticalEnd, LayoutPanelLeft, List, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -32,6 +32,19 @@ const sidebarLinks: SidebarI[] = [
         url: "/app/subjects",
         icon: List
       },
+    ],
+  },
+
+  {
+    title: "Planeaciones",
+    items: [
+
+      {
+        title: "Lista de planeaciones",
+        url: "/app/plans/revise",
+        icon: BookText
+      }
+
     ],
   },
   {
