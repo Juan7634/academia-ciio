@@ -1,12 +1,12 @@
 import type { ActivityI, DataActivity, EvaluationCriteriaI } from "../../schema/StudyPlantI"
 
-export const defaultActivitiesValues: ActivityI = {
+export const defaultActivitiesValues: ActivityI[] = [{
     unit: "",
     activity: "",
     tool: "",
     studentDevelop: "",
     date: new Date()
-}
+}]
 
 
 

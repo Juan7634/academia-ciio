@@ -10,7 +10,8 @@ import {
     useFieldArray,
     type UseFormSetValue,
     type UseFormWatch,
-    Controller
+    Controller,
+    type FieldErrors
 
 } from "react-hook-form"
 import { TableBody, TableCell } from "../ui/table"
@@ -27,6 +28,7 @@ interface CompetitionGoalProps {
     control: Control<StudyPlanFormValues>,
     setValue: UseFormSetValue<StudyPlanFormValues>;
     watch: UseFormWatch<StudyPlanFormValues>
+    errors : FieldErrors<StudyPlanFormValues>
 }
 
 const keyMap = {
@@ -36,7 +38,7 @@ const keyMap = {
     tool: "tool"
 } as const;
 
-export const CompetitionGoal = ({ control, register, setValue }: CompetitionGoalProps) => {
+export const CompetitionGoal = ({ control, register, setValue , errors}: CompetitionGoalProps) => {
 
     const { fields: fieldsActivities, remove, append } = useFieldArray({
         control,
@@ -58,8 +60,8 @@ export const CompetitionGoal = ({ control, register, setValue }: CompetitionGoal
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {fieldsActivities.flatMap((field, index) => {
-
+                {fieldsActivities.flatMap((field, index) => {
+                        
                         return (
                             <TableRow key={index} >
                                 {
@@ -75,10 +77,12 @@ export const CompetitionGoal = ({ control, register, setValue }: CompetitionGoal
                                                     name={`activities.${index}.${activityKey}`}
                                                     data={data}
                                                     setValue={setValue}
+                                                    errors={errors}
+                                                    index={index}
                                                 />
                                             );
                                         })}
-                                <TableCell className="text-center">
+                                <TableCell className="text-center align-top">
                                     <Controller
                                         control={control}
                                         name={`activities.${index}.date`}
@@ -109,7 +113,7 @@ export const CompetitionGoal = ({ control, register, setValue }: CompetitionGoal
             </Table>
 
             <div className="mt-3">
-                <Button variant={'outline'} type="submit" onClick={() => {
+                <Button variant={'outline'} type="button" onClick={() => {
                     append(defaultActivitiesValues)
                 }}>
                     Agregar columna

@@ -1,4 +1,4 @@
-import { useFieldArray, type Control, type UseFormRegister, type UseFormWatch } from "react-hook-form";
+import { useFieldArray, type Control, type FieldErrors, type UseFormRegister, type UseFormWatch } from "react-hook-form";
 import { GroupContainer } from "../GroupContainer";
 import { ListPlus, Trash } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -6,15 +6,18 @@ import { Button } from "../ui/button";
 import type { StudyPlanFormValues } from "../../schema/StudyPlantI";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Input } from "../ui/input";
+import { ShowErrorForm } from "../ShowErrorForm";
 
 
 interface EvaluationActivitiesProps {
     register: UseFormRegister<StudyPlanFormValues>
-    control: Control<StudyPlanFormValues>,    
+    control: Control<StudyPlanFormValues>,
     watch: UseFormWatch<StudyPlanFormValues>
+    errors: FieldErrors<StudyPlanFormValues>
+
 }
 
-export const EvaluationActivities = ({ register, control, watch }: EvaluationActivitiesProps) => {
+export const EvaluationActivities = ({ register, control, watch , errors}: EvaluationActivitiesProps) => {
 
     const { fields: fieldEvaluationActivities, remove, append } = useFieldArray({
         control,
@@ -35,14 +38,18 @@ export const EvaluationActivities = ({ register, control, watch }: EvaluationAct
                 <TableBody>
 
                     {
-                        fieldEvaluationActivities.map((field, index) => (
-                            <TableRow key={index}>
+                        fieldEvaluationActivities.map((field, index) => {
+
+                            const errorName = errors.evaluationActivities?.[index]?.name?.message;
+
+                            return (<TableRow key={index}>
                                 <TableCell className="border">
                                     {field.name === '' ? (
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <Input
                                                     {...register(`evaluationActivities.${index}.name`)}
+                                                    className={`${errorName && 'border-red-500'} `}
                                                 />
                                             </TooltipTrigger>
                                             <TooltipContent>
@@ -55,6 +62,12 @@ export const EvaluationActivities = ({ register, control, watch }: EvaluationAct
                                         (
                                             <p>{field.name}</p>
                                         )}
+
+                                    {
+                                        errorName && (
+                                            <ShowErrorForm message={errorName} />
+                                        )
+                                    }
                                 </TableCell>
 
                                 <TableCell className="border text-center" >
@@ -63,17 +76,17 @@ export const EvaluationActivities = ({ register, control, watch }: EvaluationAct
                                             <Button variant="destructive" className="cursor-pointer" onClick={() => { remove(index) }}>
                                                 <Trash />
                                             </Button>
-
                                         )
                                     }
                                 </TableCell>
 
-                            </TableRow>
-                        ))
+                            </TableRow>)
+                        }
+                        )
                     }
 
                 </TableBody>
-                
+
             </Table>
 
             <div className="mt-4">

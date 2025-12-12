@@ -1,25 +1,27 @@
-import { Controller, useFieldArray, type Control, type UseFormRegister, type UseFormWatch } from "react-hook-form";
+import { Controller, useFieldArray, type Control, type FieldErrors, type UseFormRegister, type UseFormWatch } from "react-hook-form";
 import type { StudyPlanFormValues } from "../../schema/StudyPlantI";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { GroupContainer } from "../GroupContainer";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ListPlus, Trash } from "lucide-react";
+import { CircleAlert, ListPlus, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { getTotalPercentaje } from "../../lib/total";
+import { ShowErrorForm } from "../ShowErrorForm";
 
 
 interface EvaluationCriteriaProps {
     register: UseFormRegister<StudyPlanFormValues>
     control: Control<StudyPlanFormValues>,
     watch: UseFormWatch<StudyPlanFormValues>
+    errors: FieldErrors<StudyPlanFormValues>
 
 }
 
 const regexOnlyNumber = /^[0-9]+$/;
 
-export const EvaluationCriteria = ({ register, control, watch }: EvaluationCriteriaProps) => {
+export const EvaluationCriteria = ({ register, control, watch, errors }: EvaluationCriteriaProps) => {
 
     const { fields: fieldsActivities, remove, append } = useFieldArray({
         control,
@@ -34,7 +36,7 @@ export const EvaluationCriteria = ({ register, control, watch }: EvaluationCrite
         >
             <Table >
                 <TableHeader className="bg-muted border ">
-                    <TableRow >
+                    <TableRow>
                         <TableHead className="border text-center font-bold" >Nombre</TableHead>
                         <TableHead className="border text-center font-bold">Porcentaje</TableHead>
                         <TableHead className="border text-center font-bold">Acciones</TableHead>
@@ -42,7 +44,8 @@ export const EvaluationCriteria = ({ register, control, watch }: EvaluationCrite
                 </TableHeader>
                 <TableBody>
                     {fieldsActivities.map((field, index) => {
-
+                        const errorValue = errors.evaluationCriteria?.[index]?.value?.message;
+                        const errorName = errors.evaluationCriteria?.[index]?.name?.message;
                         return (
                             <TableRow key={index}>
                                 <TableCell className="border">
@@ -52,6 +55,7 @@ export const EvaluationCriteria = ({ register, control, watch }: EvaluationCrite
                                                 <TooltipTrigger>
                                                     <Input
                                                         {...register(`evaluationCriteria.${index}.name`)}
+                                                        className={`${errorValue && 'border-red-500'} `}
                                                     />
                                                 </TooltipTrigger>
                                                 <TooltipContent>
@@ -66,25 +70,52 @@ export const EvaluationCriteria = ({ register, control, watch }: EvaluationCrite
 
                                     }
 
+                                    {
+                                        errorName && (
+                                            <ShowErrorForm message={errorName} />
+                                        )
+                                    }
+
+
+
                                 </TableCell>
-                                <TableCell className="border">
+                                <TableCell className="border ">
 
 
                                     <Controller
                                         control={control}
                                         name={`evaluationCriteria.${index}.value`}
                                         render={({ field }) => (
-                                            <Input
-                                                type="text"
-                                                value={field.value}
-                                                onChange={(val) => {
-                                                    const value = val.target.value;
-                                                    
-                                                    if (!regexOnlyNumber.test(value) && value !== "") return;
-                                                    console.log('Hola 2', regexOnlyNumber.test(value))
-                                                    field.onChange(value)
-                                                }}
-                                            />
+                                            <div className=" flex">
+                                                <Input
+                                                    type="text"
+                                                    value={field.value}
+                                                    onChange={(val) => {
+                                                        const value = val.target.value;
+                                                        if (!regexOnlyNumber.test(value) && value !== "") return;
+                                                        field.onChange(value)
+                                                    }}
+                                                    className={`${errorValue && 'border-red-500'} min-w-28 `}
+
+
+                                                />
+                                                {
+                                                    errorValue && (
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button variant='link'>
+                                                                    <CircleAlert className="text-red-500" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent >
+                                                                <ShowErrorForm classname="text-white!" message={errorValue} />
+                                                            </TooltipContent>
+                                                        </Tooltip>
+
+                                                    )
+                                                }
+                                            </div>
+
                                         )}
                                     />
 
@@ -92,7 +123,7 @@ export const EvaluationCriteria = ({ register, control, watch }: EvaluationCrite
                                 <TableCell className="border text-center" >
                                     {
                                         field.name === '' && (
-                                            <Button variant="destructive" className="cursor-pointer" onClick={() => { remove(index) }}>
+                                            <Button type="button" variant="destructive" className="cursor-pointer" onClick={() => { remove(index) }}>
                                                 <Trash />
                                             </Button>
 

@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/popover"
 import { useState } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
-import type { UseFormRegister, UseFormSetValue } from "react-hook-form"
+import type { FieldError, FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form"
 import type { ComboBoxValueI, StudyPlanFormValues } from "../../schema/StudyPlantI"
+import { ShowErrorForm } from "../ShowErrorForm"
 
 
 interface ActivityFieldTableProps {
@@ -26,22 +27,32 @@ interface ActivityFieldTableProps {
     data: Array<ComboBoxValueI>
     name: `activities.${number}.${"unit" | "activity" | "tool" | "studentDevelop"}`;
     setValue: UseFormSetValue<StudyPlanFormValues>;
+    errors: FieldErrors<StudyPlanFormValues>
+    index: number
+
 }
 
 export const ActivityFieldTable = ({
     register,
     data,
     name,
-    setValue
-
+    setValue,
+    errors,
+    index
 }: ActivityFieldTableProps) => {
 
     const [open, setOpen] = useState<boolean>(false)
-    const [value, setLocalValue] = useState<string>("")
+    const [value, setLocalValue] = useState<string>("");
+
+    const field = name.split(".")[2] as "unit" | "activity" | "tool" | "studentDevelop";
+    const fieldError =
+        errors.activities?.[index]?.[field] as
+        | FieldError
+        | undefined;
 
     return (
 
-        <TableCell className="text-center">
+        <TableCell className="text-center align-top">
             <input type="hidden" {...register(name)} value={value} />
 
             <Popover open={open} onOpenChange={setOpen}>
@@ -92,7 +103,11 @@ export const ActivityFieldTable = ({
                 </PopoverContent>
             </Popover>
 
-        </TableCell>
+            {fieldError?.message && (
+                <ShowErrorForm message={fieldError.message} />
+            )}
+
+        </TableCell >
 
     )
 }

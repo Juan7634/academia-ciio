@@ -1,4 +1,4 @@
-import { useFieldArray, type Control, type UseFormRegister,  type UseFormWatch } from "react-hook-form";
+import { useFieldArray, type Control, type FieldErrors, type UseFormRegister, type UseFormWatch } from "react-hook-form";
 import { GroupContainer } from "../GroupContainer";
 import { ListPlus, Trash } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -6,15 +6,16 @@ import { Button } from "../ui/button";
 import type { StudyPlanFormValues } from "../../schema/StudyPlantI";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Input } from "../ui/input";
+import { ShowErrorForm } from "../ShowErrorForm";
 
 interface EvaluationProductsProps {
     register: UseFormRegister<StudyPlanFormValues>
     control: Control<StudyPlanFormValues>,
     watch: UseFormWatch<StudyPlanFormValues>
-
+    errors: FieldErrors<StudyPlanFormValues>
 }
 
-export const EvaluationProducts = ({ register, control, watch }: EvaluationProductsProps) => {
+export const EvaluationProducts = ({ register, control, watch, errors }: EvaluationProductsProps) => {
 
     const { fields: fieldEvaluationProducts, remove, append } = useFieldArray({
         control,
@@ -35,14 +36,16 @@ export const EvaluationProducts = ({ register, control, watch }: EvaluationProdu
                 <TableBody>
 
                     {
-                        fieldEvaluationProducts.map((field, index) => (
-                            <TableRow key={index}>
+                        fieldEvaluationProducts.map((field, index) => {
+                            const errorName = errors.products?.[index]?.name?.message;
+                            return (<TableRow key={index}>
                                 <TableCell className="border">
                                     {field.name === '' ? (
                                         <Tooltip>
                                             <TooltipTrigger>
                                                 <Input
                                                     {...register(`products.${index}.name`)}
+                                                    className={`${errorName && 'border-red-500'} `}
                                                 />
                                             </TooltipTrigger>
                                             <TooltipContent>
@@ -55,6 +58,12 @@ export const EvaluationProducts = ({ register, control, watch }: EvaluationProdu
                                         (
                                             <p>{field.name}</p>
                                         )}
+
+                                    {
+                                        errorName && (
+                                            <ShowErrorForm message={errorName} />
+                                        )
+                                    }
                                 </TableCell>
 
                                 <TableCell className="border text-center" >
@@ -68,8 +77,8 @@ export const EvaluationProducts = ({ register, control, watch }: EvaluationProdu
                                     }
                                 </TableCell>
 
-                            </TableRow>
-                        ))
+                            </TableRow>);
+                        })
                     }
 
                 </TableBody>

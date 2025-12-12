@@ -32,6 +32,7 @@ export interface DataActivity {
     studentDevelop : ComboBoxValueI[]    
 }
 
+export type ActivityKeys = keyof DataActivity;
 
 export interface StudyPlanFormValues {
     activities: ActivityI[],
